@@ -1,18 +1,24 @@
-// src/App.jsx
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
-import { ToastContainer, Zoom } from "react-toastify";
 import Home from "./pages/Home";
+import PrivateRoute from "./PrivateRoute";
+import { ToastContainer, Zoom } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if token exists
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);
@@ -20,7 +26,7 @@ const App = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
-    navigate("/login"); // Use navigate instead of window.location
+    navigate("/login");
   };
 
   return (
@@ -48,23 +54,40 @@ const App = () => {
         ) : (
           <>
             <Link to="/profile">Profile</Link>
-            <button onClick={handleLogout} className="text-red-400 hover:underline">
+            <button
+              onClick={handleLogout}
+              className="text-red-400 hover:underline"
+            >
               Logout
             </button>
           </>
         )}
       </nav>
+
       <Routes>
-        <Route path="/register" element={<Register setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route
+          path="/register"
+          element={<Register setIsLoggedIn={setIsLoggedIn} />}
+        />
+        <Route
+          path="/login"
+          element={<Login setIsLoggedIn={setIsLoggedIn} />}
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute isLoggedIn={isLoggedIn}>
+              <Profile />
+            </PrivateRoute>
+          }
+        />
         <Route path="/" element={<Home />} />
       </Routes>
     </>
   );
 };
 
-// Need to wrap App with Router
+// Wrap App with Router
 export default function AppWrapper() {
   return (
     <Router>
