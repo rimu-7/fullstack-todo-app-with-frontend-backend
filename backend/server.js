@@ -10,7 +10,7 @@ const app = express();
 const port = process.env.PORT || 4501;
 
 app.use(cors({
-    origin: ['http://localhost:5173', 'https://todoappbyrimu.vercel.app/'],
+    origin: ['http://localhost:5173', 'https://todoappbyrimu.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true 
 }));
