@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'http://localhost:4500/api', // Change if your backend port is different
+    baseURL: 'https://fullstack-todo-app-with-frontend-ba.vercel.app/api',
 });
 
 export default API;

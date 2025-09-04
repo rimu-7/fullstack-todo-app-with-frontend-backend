@@ -10,6 +10,7 @@ const Profile = () => {
   const [formData, setFormData] = useState({ title: "", description: "" });
   const [loading, setLoading] = useState(true);
   const [selectedTodos, setSelectedTodos] = useState([]);
+  const [userLoading, setUserLoading] = useState(true); // Add loading state for user
 
   const token = localStorage.getItem("token");
 
@@ -17,12 +18,16 @@ const Profile = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        setUserLoading(true);
         const response = await API.get("/users/current", {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(response.data);
       } catch (error) {
         toast.error("Failed to load user profile");
+        console.log("Failed to load user profile", error);
+      } finally {
+        setUserLoading(false);
       }
     };
     fetchUser();
@@ -45,6 +50,8 @@ const Profile = () => {
       setLoading(false);
     } catch (error) {
       toast.error("Failed to load todos");
+      console.log("Failed to load todos", error);
+      
       setLoading(false);
     }
   };
@@ -65,6 +72,7 @@ const Profile = () => {
       fetchTodos();
       toast.success("Todo created successfully");
     } catch (error) {
+      console.log("Failed to create todo", error);
       toast.error("Failed to create todo");
     }
   };
@@ -82,6 +90,7 @@ const Profile = () => {
         )
       );
     } catch (error) {
+      console.log("Failed to update todo status", error);
       toast.error("Failed to update todo status");
     }
   };
@@ -137,7 +146,13 @@ const Profile = () => {
     <div className="p-4 max-w-3xl mx-auto">
       <h2 className="text-3xl font-bold mb-6 text-center">Profile</h2>
 
-      {user ? (
+      {userLoading ? (
+        <div className="space-y-2 mb-8 max-w-2xl mx-auto text-center">
+          <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto mb-2 animate-pulse"></div>
+          <div className="h-4 bg-gray-200 rounded w-1/2 mx-auto mb-4 animate-pulse"></div>
+          <div className="h-10 bg-gray-300 rounded w-32 mx-auto animate-pulse"></div>
+        </div>
+      ) : user ? (
         <div className="space-y-2 mb-8 max-w-2xl mx-auto text-center">
           <p className="text-lg">
             <strong>Hello, </strong> {user.name}, welcome to your profile.
@@ -145,7 +160,7 @@ const Profile = () => {
           <LogoutButton />
         </div>
       ) : (
-        <p className="text-center">Loading profile...</p>
+        <p className="text-center text-red-500">Failed to load profile</p>
       )}
 
       {/* Add New Todo */}
@@ -217,7 +232,22 @@ const Profile = () => {
         </h3>
 
         {loading ? (
-          <p className="text-center">Loading todos...</p>
+          // Placeholder while loading todos
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="p-4 border rounded-lg shadow animate-pulse">
+                <div className="flex items-center gap-4 w-full">
+                  <div className="w-5 h-5 bg-gray-300 rounded"></div>
+                  <div className="flex-1">
+                    <div className="h-6 bg-gray-300 rounded w-3/4 mb-2"></div>
+                    <div className="h-4 bg-gray-300 rounded w-full mb-2"></div>
+                    <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                  </div>
+                  <div className="w-5 h-5 bg-gray-300 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
         ) : todos.length === 0 ? (
           <p className="text-center">No todos found.</p>
         ) : (
