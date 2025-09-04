@@ -3,7 +3,8 @@ import API from "../../api";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-const Login = () => {
+const Login = ({ setIsLoggedIn }) => {
+  // ⬅ get setIsLoggedIn as prop
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
@@ -15,8 +16,10 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await API.post("/users/login", formData);
+
       localStorage.setItem("token", response.data.accessToken);
-      // alert('Login successful');
+      setIsLoggedIn(true);
+
       toast.success("Login successful");
       navigate("/profile");
     } catch (error) {
@@ -47,7 +50,12 @@ const Login = () => {
         <button type="submit" className="bg-green-500 text-white p-2 rounded">
           Login
         </button>
-        <span>Don't have and account? <Link to="/register" className="text-blue-500">SignUp</Link></span>
+        <span>
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-500">
+            SignUp
+          </Link>
+        </span>
       </form>
     </div>
   );

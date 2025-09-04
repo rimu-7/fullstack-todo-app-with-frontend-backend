@@ -1,7 +1,9 @@
-import React from "react";
 import { Navigate } from "react-router-dom";
 
-const PrivateRoute = ({ isLoggedIn, children }) => {
+const PrivateRoute = ({ children, isLoggedIn }) => {
+  if (isLoggedIn === null) {
+    return null; // or a spinner
+  }
   return isLoggedIn ? children : <Navigate to="/login" replace />;
 };
 

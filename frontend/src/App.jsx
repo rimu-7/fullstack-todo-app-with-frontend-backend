@@ -13,14 +13,19 @@ import Home from "./pages/Home";
 import PrivateRoute from "./PrivateRoute";
 import { ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Loader from "./pages/Loader";
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+
+    
+    setTimeout(() => {
+      setIsLoggedIn(!!token);
+    }, 600);
   }, []);
 
   const handleLogout = () => {
@@ -29,21 +34,25 @@ const App = () => {
     navigate("/login");
   };
 
+  if (isLoggedIn === null) {
+    return <Loader />;
+  }
+
   return (
     <>
       <ToastContainer
         position="top-center"
-        autoClose={2000}
-        hideProgressBar={false}
+        autoClose={1000}
+        hideProgressBar={true}
         newestOnTop={false}
         closeOnClick={false}
         rtl={false}
-        pauseOnFocusLoss
         draggable
         pauseOnHover
         theme="dark"
         transition={Zoom}
       />
+
       <nav className="flex gap-4 p-4 bg-gray-800 text-white">
         <Link to="/">Home</Link>
         {!isLoggedIn ? (
@@ -87,7 +96,6 @@ const App = () => {
   );
 };
 
-// Wrap App with Router
 export default function AppWrapper() {
   return (
     <Router>
